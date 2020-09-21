@@ -1,0 +1,10 @@
+.board {
+  margin-top: 5%;
+  border-collapse: collapse;
+}
+
+.board td {
+  border: 1px solid black;
+  width: 25px;
+  height: 25px;
+}

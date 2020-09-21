@@ -1,0 +1,21 @@
+.node td {
+  border: 1px solid rgb(175, 216, 248);
+  width: 25px;
+  height: 25px;
+}
+
+.node-start {
+  background-color: red;
+}
+
+.node-visited {
+  background-color: green;
+}
+
+.node-finish {
+  background-color: blueviolet;
+}
+
+.shortest-path-node {
+  background-color: honeydew;
+}
