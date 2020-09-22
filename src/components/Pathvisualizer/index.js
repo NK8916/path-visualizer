@@ -13,13 +13,29 @@ export class Pathvisualizer extends Component {
     super();
     this.state = {
       grid: [],
+      mouseIsPressed: false,
     };
     this.visualize = this.visualize.bind(this);
   }
   componentDidMount() {
     const grid = getInitialGrid();
-    console.log("gridd", grid[10][15]);
     this.setState({ grid });
+  }
+
+  handleMouseDown(row, col) {
+    console.log("working", row, col);
+    const newGrid = getNewGrid(this.state.grid, row, col);
+    this.setState({ grid: newGrid, mouseIsPressed: true });
+  }
+
+  handleMouseEnter(row, col) {
+    if (!this.state.mouseIsPressed) return;
+    const newGrid = getNewGrid(this.state.grid, row, col);
+    this.setState({ grid: newGrid });
+  }
+
+  handleMouseUp() {
+    this.setState({ mouseIsPressed: false });
   }
 
   animateDijsktras(visitedNodesInorder, shortestPathNodes) {
@@ -64,7 +80,7 @@ export class Pathvisualizer extends Component {
     this.animateDijsktras(visitedNodesInorder, shortestPathNodes);
   }
   render() {
-    const { grid } = this.state;
+    const { grid, mouseIsPressed } = this.state;
     return (
       <>
         <button onClick={this.visualize}>Visualize</button>
@@ -81,6 +97,16 @@ export class Pathvisualizer extends Component {
                         isStart={isStart}
                         isFinish={isFinish}
                         isWall={isWall}
+                        mouseIsPressed={mouseIsPressed}
+                        onMouseDown={(row, col) =>
+                          this.handleMouseDown(row, col)
+                        }
+                        onMouseEnter={(row, col) =>
+                          this.handleMouseEnter(row, col)
+                        }
+                        onMouseUp={() => {
+                          this.handleMouseUp();
+                        }}
                         col={col}
                         row={row}
                       ></Node>
@@ -118,4 +144,16 @@ const createNode = (col, row) => {
     isWall: false,
     previousNode: null,
   };
+};
+
+const getNewGrid = (grid, row, col) => {
+  const newGrid = grid.slice();
+  console.log("grid", grid, "new", newGrid);
+  const node = newGrid[row][col];
+  const newNode = {
+    ...node,
+    isWall: !node.isWall,
+  };
+  newGrid[row][col] = newNode;
+  return newGrid;
 };

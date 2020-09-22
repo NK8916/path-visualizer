@@ -3,7 +3,16 @@ import "./Node.css";
 
 export class Node extends Component {
   render() {
-    const { col, row, isStart, isFinish, isWall } = this.props;
+    const {
+      col,
+      row,
+      isStart,
+      isFinish,
+      isWall,
+      onMouseDown,
+      onMouseEnter,
+      onMouseUp,
+    } = this.props;
     const extractClassName = isFinish
       ? "node-finish"
       : isStart
@@ -12,7 +21,13 @@ export class Node extends Component {
       ? "node-wall"
       : "";
     return (
-      <td id={`node-${row}-${col}`} className={`node ${extractClassName}`}></td>
+      <td
+        id={`node-${row}-${col}`}
+        className={`node ${extractClassName}`}
+        onMouseDown={() => onMouseDown(row, col)}
+        onMouseEnter={() => onMouseEnter(row, col)}
+        onMouseUp={() => onMouseUp()}
+      ></td>
     );
   }
 }
