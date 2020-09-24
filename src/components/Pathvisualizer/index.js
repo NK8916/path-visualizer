@@ -3,16 +3,20 @@ import { Node } from "../Node";
 import { dijsktras, getShortestPathNodes } from "../algorithms/dijsktras";
 import "./Pathvisualizer.css";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
+const NO_OF_ROWS = parseInt(window.innerHeight / 35);
+const NO_OF_COLS = parseInt(window.innerWidth / 25);
 
 export class Pathvisualizer extends Component {
   constructor() {
     super();
     this.state = {
       grid: [],
+      START_NODE_ROW: 13,
+      START_NODE_COL: 5,
+      FINISH_NODE_ROW: 10,
+      FINISH_NODE_COL: 35,
+      dragStart: false,
+      dragTarget: false,
       mouseIsPressed: false,
     };
     this.visualize = this.visualize.bind(this);
@@ -26,21 +30,40 @@ export class Pathvisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
-    console.log("mousedown");
-    const newGrid = getNewGrid(this.state.grid, row, col);
-    this.setState({ grid: newGrid, mouseIsPressed: true });
+    const {
+      START_NODE_ROW,
+      START_NODE_COL,
+      FINISH_NODE_ROW,
+      FINISH_NODE_COL,
+    } = this.state;
+    if (row === START_NODE_ROW && col === START_NODE_COL) {
+      this.setState({ dragStart: true });
+    } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
+      this.setState({ dragTarget: true });
+    } else {
+      const newGrid = getNewGrid(this.state.grid, row, col);
+      this.setState({ grid: newGrid, mouseIsPressed: true });
+    }
   }
 
   handleMouseEnter(row, col) {
-    console.log("mouse enter", this.state.mouseIsPressed);
-    if (!this.state.mouseIsPressed) return;
-    const newGrid = getNewGrid(this.state.grid, row, col);
-    this.setState({ grid: newGrid });
+    const { dragStart, dragTarget, mouseIsPressed } = this.state;
+    if (dragStart) {
+      this.setState({ START_NODE_ROW: row, START_NODE_COL: col });
+    } else if (dragTarget) {
+      this.setState({ FINISH_NODE_ROW: row, FINISH_NODE_COL: col });
+    } else if (mouseIsPressed) {
+      const newGrid = getNewGrid(this.state.grid, row, col);
+      this.setState({ grid: newGrid });
+    }
   }
 
   handleMouseUp() {
-    console.log("mouse up");
-    this.setState({ mouseIsPressed: false });
+    this.setState({
+      mouseIsPressed: false,
+      dragStart: false,
+      dragTarget: false,
+    });
   }
 
   animateDijsktras(visitedNodesInorder, shortestPathNodes) {
@@ -75,7 +98,13 @@ export class Pathvisualizer extends Component {
   }
 
   visualize() {
-    const { grid } = this.state;
+    const {
+      grid,
+      START_NODE_ROW,
+      START_NODE_COL,
+      FINISH_NODE_ROW,
+      FINISH_NODE_COL,
+    } = this.state;
     console.log(grid);
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
@@ -95,12 +124,18 @@ export class Pathvisualizer extends Component {
               return (
                 <tr key={rowIdx}>
                   {row.map((node, nodeIdx) => {
-                    const { col, row, isStart, isFinish, isWall } = node;
+                    const { col, row, isWall } = node;
                     return (
                       <Node
                         key={nodeIdx}
-                        isStart={isStart}
-                        isFinish={isFinish}
+                        isStart={
+                          row === this.state.START_NODE_ROW &&
+                          col === this.state.START_NODE_COL
+                        }
+                        isFinish={
+                          row === this.state.FINISH_NODE_ROW &&
+                          col === this.state.FINISH_NODE_COL
+                        }
                         isWall={isWall}
                         mouseIsPressed={mouseIsPressed}
                         onMouseDown={(row, col) =>
@@ -128,9 +163,9 @@ export class Pathvisualizer extends Component {
 }
 const getInitialGrid = () => {
   const grid = [];
-  for (let row = 0; row < 20; row++) {
+  for (let row = 0; row < NO_OF_ROWS; row++) {
     const currentRow = [];
-    for (let col = 0; col < 50; col++) {
+    for (let col = 0; col < NO_OF_COLS; col++) {
       currentRow.push(createNode(col, row));
     }
     grid.push(currentRow);
@@ -142,8 +177,8 @@ const createNode = (col, row) => {
   return {
     col,
     row,
-    isStart: row === START_NODE_ROW && col === START_NODE_COL,
-    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    isStart: false,
+    isFinish: false,
     distance: Infinity,
     isVisited: false,
     isWall: false,

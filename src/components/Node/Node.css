@@ -5,7 +5,15 @@
 }
 
 .node-start {
-  background-color: red;
+  background-image: url("../../public/icons/sourcetree-brands.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation-name: specialNodes;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-fill-mode: forwards;
 }
 
 .node-visited {
@@ -18,12 +26,20 @@
 }
 
 .node-finish {
-  background-color: blueviolet;
+  background-image: url("../../public/icons/target.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation-name: specialNodes;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-fill-mode: forwards;
 }
 
 .shortest-path-node {
   animation-name: shortestPath;
-  animation-duration: 1.5s;
+  animation-duration: 2s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-direction: alternate;
@@ -76,12 +92,12 @@
 
   100% {
     transform: scale(1);
-    background-color: rgb(106, 255, 143);
+    background-color: rgb(169, 206, 164);
   }
 }
 
 @keyframes wallAnimation {
-  from {
+  0% {
     will-change: transform;
     transform: scale(0.3);
     background-color: rgb(12, 53, 71);
@@ -97,5 +113,18 @@
     will-change: transform;
     transform: scale(1);
     background-color: rgb(12, 53, 71);
+  }
+}
+
+@keyframes specialNodes {
+  0% {
+    transform: scale(0.3);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }
