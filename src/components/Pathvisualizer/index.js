@@ -16,6 +16,9 @@ export class Pathvisualizer extends Component {
       mouseIsPressed: false,
     };
     this.visualize = this.visualize.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
   }
   componentDidMount() {
     const grid = getInitialGrid();
@@ -23,18 +26,20 @@ export class Pathvisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
-    console.log("working", row, col);
+    console.log("mousedown");
     const newGrid = getNewGrid(this.state.grid, row, col);
     this.setState({ grid: newGrid, mouseIsPressed: true });
   }
 
   handleMouseEnter(row, col) {
+    console.log("mouse enter", this.state.mouseIsPressed);
     if (!this.state.mouseIsPressed) return;
     const newGrid = getNewGrid(this.state.grid, row, col);
     this.setState({ grid: newGrid });
   }
 
   handleMouseUp() {
+    console.log("mouse up");
     this.setState({ mouseIsPressed: false });
   }
 
@@ -148,7 +153,6 @@ const createNode = (col, row) => {
 
 const getNewGrid = (grid, row, col) => {
   const newGrid = grid.slice();
-  console.log("grid", grid, "new", newGrid);
   const node = newGrid[row][col];
   const newNode = {
     ...node,
