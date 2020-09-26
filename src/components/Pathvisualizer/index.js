@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Node } from "../Node";
-import { dijsktras, getShortestPathNodes } from "../algorithms/dijsktras";
+import { NavBar } from "../Navbar";
+import { dijsktras } from "../algorithms/dijsktras";
+import { getShortestPathNodes } from "../algorithms/shortest-path";
 import "./Pathvisualizer.css";
 
 const NO_OF_ROWS = parseInt(window.innerHeight / 35);
@@ -117,6 +119,7 @@ export class Pathvisualizer extends Component {
     const { grid, mouseIsPressed } = this.state;
     return (
       <>
+        <NavBar></NavBar>
         <button onClick={this.visualize}>Visualize</button>
         <table className={"board"}>
           <tbody>
