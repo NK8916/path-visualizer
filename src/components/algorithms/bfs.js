@@ -1,31 +1,35 @@
 import { Queue } from "./queue";
 
 export function bfs(grid, sourceNode, finishNode) {
+  console.log("In bfs");
   const visitedNodes = [];
-  sourceNode.distance = 0;
   let queue = new Queue();
-  queue.append(sourceNode);
-
-  while (queue.isEmpty()) {
+  queue.enqueue(sourceNode);
+  let sourceString = `${sourceNode.row}-${sourceNode.col}`;
+  let exploredNodes = {};
+  exploredNodes[sourceString] = true;
+  while (!queue.isEmpty()) {
     const node = queue.dequeue();
     if (node.isWall) continue;
 
-    if (node.distance === Infinity) return visitedNodes;
     node.isVisited = true;
     visitedNodes.push(node);
-    let unvisitedNeighbors = getUnvisitedNeighbours(node, grid);
-
     if (node === finishNode) return visitedNodes;
 
+    let unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
     for (const neighbor of unvisitedNeighbors) {
-      queue.enqueue(neighbor);
-      neighbor.distance = node.distance + 1;
-      neighbor.previousNode = node;
+      let nodeString = `${neighbor.row}-${neighbor.col}`;
+      if (!exploredNodes[nodeString]) {
+        exploredNodes[nodeString] = true;
+        neighbor.previousNode = node;
+        queue.enqueue(neighbor);
+      }
     }
   }
+  return visitedNodes;
 }
 
-function getUnvisitedNeighbours(node, grid) {
+function getUnvisitedNeighbors(node, grid) {
   let neighbors = [];
   const { row, col } = node;
 

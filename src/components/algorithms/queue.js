@@ -5,7 +5,7 @@ export class Queue {
     this.length = 0;
   }
   enqueue(value) {
-    const node = LinkedList(value);
+    const node = new LinkedList(value);
     if (!this.front) {
       this.front = node;
       this.tail = node;
@@ -24,6 +24,13 @@ export class Queue {
       this.length -= 1;
       return temp.value;
     }
+  }
+
+  peek() {
+    if (this.front) {
+      return this.front.value;
+    }
+    return null;
   }
 
   isEmpty() {

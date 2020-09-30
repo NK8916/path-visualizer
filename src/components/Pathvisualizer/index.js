@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Node } from "../Node";
 import { NavBar } from "../Navbar";
+import { bfs } from "../algorithms/bfs";
 import { dijsktras } from "../algorithms/dijsktras";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
 import "./Pathvisualizer.css";
@@ -16,21 +17,41 @@ export class Pathvisualizer extends Component {
       START_NODE_ROW: 13,
       START_NODE_COL: 5,
       FINISH_NODE_ROW: 10,
-      FINISH_NODE_COL: 35,
+      FINISH_NODE_COL: 10,
       dragStart: false,
       dragTarget: false,
       mouseIsPressed: false,
+      algorithmHeading: "Dijsktra's Algorithm",
+      algorithm: "Dijsktras",
+      algorithms: ["Dijsktras", "Breadth First Search"],
     };
     this.visualize = this.visualize.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleAlgo = this.handleAlgo.bind(this);
   }
   componentDidMount() {
     const grid = getInitialGrid();
     this.setState({ grid });
   }
 
+  handleAlgo(algorithm) {
+    switch (algorithm) {
+      case "Breadth First Search": {
+        this.setState({ algorithm: "Breadth First Search" });
+        this.setState({ algorithmHeading: "Breadth First Search Algorithm" });
+        break;
+      }
+      case "Dijsktras": {
+        this.setState({ algorithm: "Dijsktras" });
+        this.setState({ algorithmHeading: "Dijsktras Algorithm" });
+        break;
+      }
+      default:
+        this.setState({ algorithm: "Dijsktras" });
+    }
+  }
   handleMouseDown(row, col) {
     const {
       START_NODE_ROW,
@@ -68,7 +89,7 @@ export class Pathvisualizer extends Component {
     });
   }
 
-  animateDijsktras(visitedNodesInorder, shortestPathNodes) {
+  animateTraversal(visitedNodesInorder, shortestPathNodes) {
     for (let i = 0; i <= visitedNodesInorder.length; i++) {
       if (i === visitedNodesInorder.length) {
         setTimeout(() => {
@@ -99,7 +120,8 @@ export class Pathvisualizer extends Component {
     }
   }
 
-  visualize() {
+  traverseAlgorithms(algorithm) {
+    let visitedNodesInorder = [];
     const {
       grid,
       START_NODE_ROW,
@@ -107,20 +129,46 @@ export class Pathvisualizer extends Component {
       FINISH_NODE_ROW,
       FINISH_NODE_COL,
     } = this.state;
-    console.log(grid);
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    const visitedNodesInorder = dijsktras(grid, start, finish);
+
+    switch (algorithm) {
+      case "Dijsktras": {
+        visitedNodesInorder = dijsktras(grid, start, finish);
+        break;
+      }
+      case "Breadth First Search": {
+        visitedNodesInorder = bfs(grid, start, finish);
+        break;
+      }
+      default:
+        visitedNodesInorder = dijsktras(grid, start, finish);
+    }
     const shortestPathNodes = getShortestPathNodes(finish);
-    console.log("shotest", shortestPathNodes);
-    this.animateDijsktras(visitedNodesInorder, shortestPathNodes);
+
+    return { visitedNodesInorder, shortestPathNodes };
+  }
+
+  visualize() {
+    const { algorithm } = this.state;
+    const { visitedNodesInorder, shortestPathNodes } = this.traverseAlgorithms(
+      algorithm
+    );
+    if (visitedNodesInorder.length && shortestPathNodes.length) {
+      this.animateTraversal(visitedNodesInorder, shortestPathNodes);
+    }
   }
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
       <>
-        <NavBar></NavBar>
-        <button onClick={this.visualize}>Visualize</button>
+        <NavBar
+          onSelect={this.handleAlgo}
+          visualize={this.visualize}
+          algorithms={this.state.algorithms}
+          heading={this.state.algorithmHeading}
+        ></NavBar>
+        {/* <button onClick={this.visualize}>Visualize</button> */}
         <table className={"board"}>
           <tbody>
             {grid.map((row, rowIdx) => {

@@ -1,6 +1,7 @@
 import { MinHeap } from "./heap";
 
 export function dijsktras(grid, sourceNode, finishNode) {
+  console.log("in dijkstras");
   let visitedNodes = [];
   sourceNode.distance = 0;
   let unvisitedNodes = getAllUnvisitedNodes(grid);
