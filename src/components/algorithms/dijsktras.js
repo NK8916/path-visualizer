@@ -5,7 +5,6 @@ export function dijsktras(grid, sourceNode, finishNode) {
   let visitedNodes = [];
   sourceNode.distance = 0;
   let unvisitedNodes = getAllUnvisitedNodes(grid);
-  console.log("un", unvisitedNodes);
 
   while (unvisitedNodes.length) {
     let heap = new MinHeap(unvisitedNodes);

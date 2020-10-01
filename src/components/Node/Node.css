@@ -75,7 +75,7 @@
 
   100% {
     transform: scale(1);
-    background-color: rgba(0, 190, 218, 0.75);
+    background-color: rgba(0, 218, 55, 0.75);
   }
 }
 
@@ -92,7 +92,7 @@
 
   100% {
     transform: scale(1);
-    background-color: rgb(169, 206, 164);
+    background-color: rgb(206, 164, 204);
   }
 }
 
