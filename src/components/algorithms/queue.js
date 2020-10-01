@@ -16,11 +16,30 @@ export class Queue {
     this.length += 1;
   }
 
-  dequeue() {
+  dequeueFront() {
     if (this.front) {
       let temp = this.front;
       this.front = this.front.next;
       temp.next = null;
+      this.length -= 1;
+      return temp.value;
+    }
+  }
+
+  dequeueRear() {
+    if (this.front) {
+      let current = this.front;
+      let prev = null;
+      console.log(this.front, current);
+
+      while (current !== null) {
+        prev = current;
+        current = current.next;
+      }
+
+      let temp = this.tail;
+      prev.next = null;
+      this.tail = prev;
       this.length -= 1;
       return temp.value;
     }

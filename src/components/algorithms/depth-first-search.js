@@ -1,17 +1,19 @@
 import { Queue } from "./queue";
-
-export function bfs(grid, sourceNode, finishNode) {
-  console.log("In bfs");
+export function depthFirstSearch(grid, sourceNode, finishNode) {
+  console.log("In dfs");
   const visitedNodes = [];
   let queue = new Queue();
   queue.enqueue(sourceNode);
+  console.log(queue.peek());
   let sourceString = `${sourceNode.row}-${sourceNode.col}`;
   let exploredNodes = {};
   exploredNodes[sourceString] = true;
   while (!queue.isEmpty()) {
-    const node = queue.dequeueFront();
-    if (node.isWall) continue;
+    const node = queue.dequeueRear();
+    let nodeString = `${node.row}-${node.col}`;
 
+    if (node.isWall) continue;
+    exploredNodes[nodeString] = true;
     node.isVisited = true;
     visitedNodes.push(node);
     if (node === finishNode) return visitedNodes;
@@ -20,7 +22,6 @@ export function bfs(grid, sourceNode, finishNode) {
     for (const neighbor of unvisitedNeighbors) {
       let nodeString = `${neighbor.row}-${neighbor.col}`;
       if (!exploredNodes[nodeString]) {
-        exploredNodes[nodeString] = true;
         neighbor.previousNode = node;
         queue.enqueue(neighbor);
       }

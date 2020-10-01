@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Node } from "../Node";
 import { NavBar } from "../Navbar";
 import { bfs } from "../algorithms/bfs";
+import { depthFirstSearch } from "../algorithms/depth-first-search";
 import { dijsktras } from "../algorithms/dijsktras";
 import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
@@ -24,7 +25,12 @@ export class Pathvisualizer extends Component {
       mouseIsPressed: false,
       algorithmHeading: "",
       algorithm: "",
-      algorithms: ["Dijsktras", "Breadth First Search", "Best First Search"],
+      algorithms: [
+        "Dijsktras",
+        "Breadth First Search",
+        "Best First Search",
+        "Depth First Search",
+      ],
     };
     this.visualize = this.visualize.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -52,6 +58,12 @@ export class Pathvisualizer extends Component {
       case "Best First Search": {
         this.setState({ algorithm: "Best First Search" });
         this.setState({ algorithmHeading: "Best First Search" });
+        break;
+      }
+
+      case "Depth First Search": {
+        this.setState({ algorithm: "Depth First Search" });
+        this.setState({ algorithmHeading: "Depth First Search" });
         break;
       }
       default:
@@ -152,8 +164,13 @@ export class Pathvisualizer extends Component {
         visitedNodesInorder = bestFirstSearch(grid, start, finish);
         break;
       }
+
+      case "Depth First Search": {
+        visitedNodesInorder = depthFirstSearch(grid, start, finish);
+        break;
+      }
       default:
-        visitedNodesInorder = bestFirstSearch(grid, start, finish);
+        visitedNodesInorder = dijsktras(grid, start, finish);
     }
     const shortestPathNodes = getShortestPathNodes(finish);
 
