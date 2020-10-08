@@ -4,6 +4,7 @@ import { NavBar } from "../Navbar";
 import { bfs } from "../algorithms/bfs";
 import { depthFirstSearch } from "../algorithms/depth-first-search";
 import { dijsktras } from "../algorithms/dijsktras";
+import { aStar } from "../algorithms/a-star";
 import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
 import "./Pathvisualizer.css";
@@ -30,6 +31,7 @@ export class Pathvisualizer extends Component {
         "Breadth First Search",
         "Best First Search",
         "Depth First Search",
+        "A* Algorithm",
       ],
     };
     this.visualize = this.visualize.bind(this);
@@ -64,6 +66,11 @@ export class Pathvisualizer extends Component {
       case "Depth First Search": {
         this.setState({ algorithm: "Depth First Search" });
         this.setState({ algorithmHeading: "Depth First Search" });
+        break;
+      }
+      case "A* Algorithm": {
+        this.setState({ algorithm: "A* Algorithm" });
+        this.setState({ algorithmHeading: "A* Algorithm" });
         break;
       }
       default:
@@ -169,8 +176,13 @@ export class Pathvisualizer extends Component {
         visitedNodesInorder = depthFirstSearch(grid, start, finish);
         break;
       }
+      case "A* Algorithm": {
+        visitedNodesInorder = aStar(grid, start, finish);
+        break;
+      }
       default:
-        visitedNodesInorder = dijsktras(grid, start, finish);
+        console.log("Select Algorithms");
+        this.setState({ algorithmHeading: "Pick An Algorithm" });
     }
     const shortestPathNodes = getShortestPathNodes(finish);
 
@@ -254,14 +266,16 @@ const getInitialGrid = () => {
 
 const createNode = (col, row) => {
   return {
-    col,
     row,
+    col,
     isStart: false,
     isFinish: false,
+    direction: null,
     distance: Infinity,
     isVisited: false,
     isWall: false,
     previousNode: null,
+    fScore: Infinity,
   };
 };
 

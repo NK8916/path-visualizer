@@ -4,15 +4,13 @@ export function bestFirstSearch(grid, sourceNode, finishNode) {
   console.log("best first search");
   let visitedNodes = [];
   sourceNode.distance = 0;
-  let priorityQueue = new PriorityQueue();
+  let priorityQueue = new PriorityQueue("distance");
 
   priorityQueue.insert(sourceNode);
 
   while (!priorityQueue.isEmpty()) {
     const node = priorityQueue.get();
     if (node.isWall) continue;
-
-    // if (node.distance === Infinity) return visitedNodes;
     node.isVisited = true;
     visitedNodes.push(node);
 

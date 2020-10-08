@@ -1,40 +1,31 @@
 export class PriorityQueue {
-  constructor() {
-    this.nodes = new PriorityHeap();
+  constructor(property) {
+    this.heap = [];
+    this.property = property;
   }
 
   isEmpty() {
-    return this.nodes.heap.length === 0;
+    return this.heap.length === 0;
   }
 
   get() {
-    return this.nodes.remove();
-  }
-
-  insert(value) {
-    this.nodes.insert(value);
-  }
-}
-
-class PriorityHeap {
-  constructor() {
-    this.heap = [];
+    return this.remove();
   }
 
   siftDown(idx, endIdx, heap) {
-    let firstParentIdx = idx * 2 + 1;
+    let firstChildIdx = idx * 2 + 1;
     let swapIdx = -1;
-    while (firstParentIdx <= endIdx) {
+    while (firstChildIdx <= endIdx) {
       let secondChildIdx = idx * 2 + 2 <= endIdx ? idx * 2 + 2 : -1;
       if (
         secondChildIdx !== -1 &&
-        heap[secondChildIdx].distance < heap[firstParentIdx].distance
+        heap[secondChildIdx][this.property] < heap[firstChildIdx][this.property]
       ) {
         swapIdx = secondChildIdx;
       } else {
-        swapIdx = firstParentIdx;
+        swapIdx = firstChildIdx;
       }
-      if (heap[swapIdx].distance < heap[idx].distance) {
+      if (heap[swapIdx][this.property] < heap[idx][this.property]) {
         this.swap(swapIdx, idx, heap);
       } else {
         return;
@@ -56,10 +47,13 @@ class PriorityHeap {
 
   siftUp(idx, heap) {
     let parentIdx = parseInt((idx - 1) / 2);
-    while (idx >= 0 && heap[parentIdx].distance > heap[idx].distance) {
+    while (
+      idx > 0 &&
+      heap[parentIdx][this.property] > heap[idx][this.property]
+    ) {
       this.swap(idx, parentIdx, heap);
       idx = parentIdx;
-      parentIdx = parseInt(idx - 1) / 2;
+      parentIdx = parseInt((idx - 1) / 2);
     }
   }
 

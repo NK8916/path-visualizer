@@ -5,7 +5,6 @@ import { Navbar, NavDropdown, Nav, Button } from "react-bootstrap";
 export class NavBar extends Component {
   render() {
     const { algorithms, heading } = this.props;
-    console.log(this.props);
     return (
       <Navbar className="navbar" expand="lg" variant="dark">
         <Navbar.Brand href="#home">Path Visualizer</Navbar.Brand>
