@@ -10,12 +10,14 @@ export function aStar(grid, sourceNode, finishNode) {
   while (!priorityQueue.isEmpty()) {
     let node = priorityQueue.get();
 
+    if(node.isWall) continue
     node.isVisited = true;
     visitedNodes.push(node);
 
     if (node === finishNode) return visitedNodes;
     updateUnvisitedNeighbour(node, grid, finishNode, priorityQueue);
   }
+  return visitedNodes;
 }
 
 function updateUnvisitedNeighbour(node, grid, finishNode, priorityQueue) {
@@ -51,5 +53,5 @@ function getUnvisitedNeighbours(node, grid) {
   if (col > 0) neighbors.push(grid[row][col - 1]);
   if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
 
-  return neighbors.filter((node) => !node.isWall);
+  return neighbors;
 }

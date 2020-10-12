@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Node } from "../Node";
 import { NavBar } from "../Navbar";
+import { recursiveDivision } from "../maze-algorithms/recursive-division";
 import { bfs } from "../algorithms/bfs";
 import { depthFirstSearch } from "../algorithms/depth-first-search";
 import { dijsktras } from "../algorithms/dijsktras";
@@ -9,8 +10,11 @@ import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
 import "./Pathvisualizer.css";
 
+
+
 const NO_OF_ROWS = parseInt(window.innerHeight / 35);
 const NO_OF_COLS = parseInt(window.innerWidth / 25);
+
 
 export class Pathvisualizer extends Component {
   constructor() {
@@ -26,6 +30,7 @@ export class Pathvisualizer extends Component {
       mouseIsPressed: false,
       algorithmHeading: "",
       algorithm: "",
+      mazeAlgorithms: ["Recursive Maze Algorithm"],
       algorithms: [
         "Dijsktras",
         "Breadth First Search",
@@ -33,16 +38,69 @@ export class Pathvisualizer extends Component {
         "Depth First Search",
         "A* Algorithm",
       ],
+      navbarHeight:null
     };
     this.visualize = this.visualize.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleAlgo = this.handleAlgo.bind(this);
+    this.generateMaze = this.generateMaze.bind(this);
   }
   componentDidMount() {
     const grid = getInitialGrid();
     this.setState({ grid });
+    const navbarHeight=document.getElementById('navbarId').clientHeight;
+    this.setState({navbarHeight})
+  }
+
+  generateMaze(algorithm) {
+    const { grid , 
+      START_NODE_ROW,
+      START_NODE_COL,
+      FINISH_NODE_ROW,
+      FINISH_NODE_COL,} = this.state;
+    console.log(grid);
+    const start = grid[START_NODE_ROW][START_NODE_COL];
+    const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    let visitedNodes=[]
+    switch (algorithm) {
+      case "Recursive Maze Algorithm": {
+
+       recursiveDivision(
+          grid,
+          start,
+          finish,
+          0,
+          NO_OF_ROWS,
+          0,
+          NO_OF_COLS,
+          "horizontal",
+          visitedNodes
+        );
+        console.log("visited",visitedNodes)
+        if(visitedNodes && visitedNodes.length){
+          
+          this.animateMaze(visitedNodes);
+        }
+      
+        break;
+      }
+      default:
+        console.log("Select Maze");
+    }
+  }
+
+  animateMaze(visitedNodes) {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        let node = visitedNodes[i];
+        node.isWall=true
+        document
+          .getElementById(`node-${node.row}-${node.col}`)
+          .setAttribute("class", "node node-wall");
+      }, 30 * i);
+    }
   }
 
   handleAlgo(algorithm) {
@@ -194,9 +252,8 @@ export class Pathvisualizer extends Component {
     const { visitedNodesInorder, shortestPathNodes } = this.traverseAlgorithms(
       algorithm
     );
-    if (visitedNodesInorder.length && shortestPathNodes.length) {
       this.animateTraversal(visitedNodesInorder, shortestPathNodes);
-    }
+    
   }
   render() {
     const { grid, mouseIsPressed } = this.state;
@@ -204,8 +261,10 @@ export class Pathvisualizer extends Component {
       <>
         <NavBar
           onSelect={this.handleAlgo}
+          selectMaze={this.generateMaze}
           visualize={this.visualize}
           algorithms={this.state.algorithms}
+          mazeAlgorithms={this.state.mazeAlgorithms}
           heading={this.state.algorithmHeading}
         ></NavBar>
         {/* <button onClick={this.visualize}>Visualize</button> */}
