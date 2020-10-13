@@ -43,9 +43,6 @@ export class NavBar extends Component {
               );
             })}
           </NavDropdown>
-          <Navbar.Brand className="text-center" href="#">
-            {heading}
-          </Navbar.Brand>
         </Nav>
 
         <Button onClick={this.props.visualize} className="visualize-button">

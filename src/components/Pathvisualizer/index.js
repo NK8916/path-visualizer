@@ -8,12 +8,8 @@ import { dijsktras } from "../algorithms/dijsktras";
 import { aStar } from "../algorithms/a-star";
 import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
+import {getInitialGrid,getNewGrid} from '../create-grid'
 import "./Pathvisualizer.css";
-
-
-
-const NO_OF_ROWS = parseInt(window.innerHeight / 35);
-const NO_OF_COLS = parseInt(window.innerWidth / 25);
 
 
 export class Pathvisualizer extends Component {
@@ -21,14 +17,14 @@ export class Pathvisualizer extends Component {
     super();
     this.state = {
       grid: [],
-      START_NODE_ROW: 13,
+      START_NODE_ROW: 5,
       START_NODE_COL: 5,
       FINISH_NODE_ROW: 10,
       FINISH_NODE_COL: 10,
       dragStart: false,
       dragTarget: false,
       mouseIsPressed: false,
-      algorithmHeading: "",
+      algorithmHeading: "Pick An Algorithm",
       algorithm: "",
       mazeAlgorithms: ["Recursive Maze Algorithm"],
       algorithms: [
@@ -38,7 +34,8 @@ export class Pathvisualizer extends Component {
         "Depth First Search",
         "A* Algorithm",
       ],
-      navbarHeight:null
+      boardHeight:null,
+      boardWidth:null
     };
     this.visualize = this.visualize.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -48,10 +45,14 @@ export class Pathvisualizer extends Component {
     this.generateMaze = this.generateMaze.bind(this);
   }
   componentDidMount() {
-    const grid = getInitialGrid();
-    this.setState({ grid });
     const navbarHeight=document.getElementById('navbarId').clientHeight;
-    this.setState({navbarHeight})
+    const headingHeight=document.getElementById('heading').clientHeight
+    let boardHeight=Math.floor((document.documentElement.clientHeight-navbarHeight-headingHeight)/31)
+    let boardWidth=Math.floor(document.documentElement.clientWidth/25)
+    this.setState({boardHeight,boardWidth})
+    const grid = getInitialGrid(boardHeight,boardWidth);
+    this.setState({ grid });
+
   }
 
   generateMaze(algorithm) {
@@ -59,11 +60,20 @@ export class Pathvisualizer extends Component {
       START_NODE_ROW,
       START_NODE_COL,
       FINISH_NODE_ROW,
-      FINISH_NODE_COL,} = this.state;
-    console.log(grid);
+      FINISH_NODE_COL,
+      boardHeight,
+      boardWidth
+    } = this.state;
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let visitedNodes=[]
+    for(let row=0;row<boardHeight;row++){
+      for(let col=0;col<boardWidth;col++){
+        if(row===0 || row===boardHeight-1 || col===0 || col===boardWidth-1){
+          visitedNodes.push(grid[row][col])
+        }
+      }
+    }
     switch (algorithm) {
       case "Recursive Maze Algorithm": {
 
@@ -71,10 +81,10 @@ export class Pathvisualizer extends Component {
           grid,
           start,
           finish,
-          0,
-          NO_OF_ROWS,
-          0,
-          NO_OF_COLS,
+          2,
+        boardHeight-3,
+          2,
+          boardWidth-3,
           "horizontal",
           visitedNodes
         );
@@ -99,7 +109,7 @@ export class Pathvisualizer extends Component {
         document
           .getElementById(`node-${node.row}-${node.col}`)
           .setAttribute("class", "node node-wall");
-      }, 30 * i);
+      }, 10 * i);
     }
   }
 
@@ -267,7 +277,7 @@ export class Pathvisualizer extends Component {
           mazeAlgorithms={this.state.mazeAlgorithms}
           heading={this.state.algorithmHeading}
         ></NavBar>
-        {/* <button onClick={this.visualize}>Visualize</button> */}
+        <h3 id="heading" className="text-center">{this.state.algorithmHeading}</h3>
         <table className={"board"}>
           <tbody>
             {grid.map((row, rowIdx) => {
@@ -311,40 +321,4 @@ export class Pathvisualizer extends Component {
     );
   }
 }
-const getInitialGrid = () => {
-  const grid = [];
-  for (let row = 0; row < NO_OF_ROWS; row++) {
-    const currentRow = [];
-    for (let col = 0; col < NO_OF_COLS; col++) {
-      currentRow.push(createNode(col, row));
-    }
-    grid.push(currentRow);
-  }
-  return grid;
-};
 
-const createNode = (col, row) => {
-  return {
-    row,
-    col,
-    isStart: false,
-    isFinish: false,
-    direction: null,
-    distance: Infinity,
-    isVisited: false,
-    isWall: false,
-    previousNode: null,
-    fScore: Infinity,
-  };
-};
-
-const getNewGrid = (grid, row, col) => {
-  const newGrid = grid.slice();
-  const node = newGrid[row][col];
-  const newNode = {
-    ...node,
-    isWall: !node.isWall,
-  };
-  newGrid[row][col] = newNode;
-  return newGrid;
-};

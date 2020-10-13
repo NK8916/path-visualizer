@@ -1,22 +1,22 @@
 
 export function recursiveDivision(grid,sourceNode,finishNode, startRow, endRow, startCol, endCol,orientation,visitedNodes) {
   console.log("recursive maze");
-  if (startRow > endRow || endCol<startCol) {
+  if (startRow> endRow || endCol<startCol) {
     return;
   }
   let nodes = getAllUnvisitedNodes(grid);
   if(orientation==="horizontal"){
     let rows = [];
-    for (let i = startRow; i <= endRow; i += 2) {
-      rows.push(i);
+    for (let row = startRow; row <= endRow; row += 2) {
+      rows.push(row);
     }
   
     let rowIdx = Math.floor(Math.random() * rows.length);
     console.log("rowdIdx",rowIdx)
     let cols = [];
   
-    for (let j = startCol-1; j <=endCol+1; j += 2) {
-      cols.push(j);
+    for (let col = startCol-1; col <=endCol+1; col += 2) {
+      cols.push(col);
     }
   
     let colIdx = Math.floor(Math.random() * cols.length);
@@ -37,14 +37,13 @@ export function recursiveDivision(grid,sourceNode,finishNode, startRow, endRow, 
         visitedNodes.push(node);
       }
     }
-    // console.log(rowIdx,colIdx,visitedNodes)
     if(currentRow-2-startRow>endCol-startCol){
       recursiveDivision(grid, sourceNode,finishNode,startRow, currentRow-2, startCol, endCol,orientation,visitedNodes);
     }
     else {
       recursiveDivision(grid,sourceNode,finishNode, startRow, currentRow - 2, startCol, endCol, "vertical",visitedNodes);
     }
-    if(endRow-(currentRow+2)>endCol-endRow){
+    if(endRow-(currentRow+2)>endCol-startCol){
       recursiveDivision(grid,sourceNode,finishNode, currentRow + 2, startCol, endRow, endCol,orientation,visitedNodes);
     }else{
       recursiveDivision(grid,sourceNode,finishNode, currentRow + 2, endRow, startCol, endCol, "vertical",visitedNodes);
@@ -59,7 +58,7 @@ export function recursiveDivision(grid,sourceNode,finishNode, startRow, endRow, 
     let colIdx = Math.floor(Math.random() * cols.length);
 
     let rows=[]
-    for(let row=startRow;row<=endRow+1;row+=2){
+    for(let row=startRow-1;row<=endRow+1;row+=2){
       rows.push(row)
     }
     let rowIdx = Math.floor(Math.random() * rows.length);
@@ -68,7 +67,7 @@ export function recursiveDivision(grid,sourceNode,finishNode, startRow, endRow, 
     let currentRow=rows[rowIdx]
 
     for(let node of nodes){
-      if(node.col===currentCol && node.row>=startRow-1 && node.row<=endRow+1 && node.row!==currentRow && node!==sourceNode && node!==finishNode){
+      if(node.col===currentCol && node.row!==currentRow && node.row>=startRow-1 && node.row<=endRow+1  && node!==sourceNode && node!==finishNode){
          visitedNodes.push(node)
        
       }
