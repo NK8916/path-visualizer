@@ -35,4 +35,19 @@ const createNode = (col, row) => {
     newGrid[row][col] = newNode;
     return newGrid;
   };
+
+  export const createNewGrid=(nodes,sourceNode,finishNode)=>{
+    for (let i = 0; i < nodes.length; i++) {
+        let node = nodes[i];
+        if(node===sourceNode || node===finishNode){
+          continue
+        }
+        node.isWall=false
+        node.isVisited=false
+        document
+          .getElementById(`node-${node.row}-${node.col}`)
+          .setAttribute("class", "node");
+
+    }
+  }
   

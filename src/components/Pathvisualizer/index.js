@@ -10,7 +10,7 @@ import { dijsktras } from "../algorithms/dijsktras";
 import { aStar } from "../algorithms/a-star";
 import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
-import {getInitialGrid,getNewGrid} from '../create-grid'
+import {getInitialGrid,getNewGrid,createNewGrid} from '../create-grid'
 import "./Pathvisualizer.css";
 
 
@@ -45,6 +45,7 @@ export class Pathvisualizer extends Component {
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleAlgo = this.handleAlgo.bind(this);
     this.generateMaze = this.generateMaze.bind(this);
+    this.reset=this.reset.bind(this)
   }
   componentDidMount() {
     const navbarHeight=document.getElementById('navbarId').clientHeight;
@@ -55,6 +56,19 @@ export class Pathvisualizer extends Component {
     const grid = getInitialGrid(boardHeight,boardWidth);
     this.setState({ grid });
 
+  }
+
+  reset(){
+    const { grid , 
+      START_NODE_ROW,
+      START_NODE_COL,
+      FINISH_NODE_ROW,
+      FINISH_NODE_COL,
+    } = this.state;
+    const start = grid[START_NODE_ROW][START_NODE_COL];
+    const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    let nodes=getAllUnvisitedNodes(grid)
+    createNewGrid(nodes,start,finish)
   }
 
   generateMaze(algorithm) {
@@ -69,19 +83,11 @@ export class Pathvisualizer extends Component {
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let visitedNodes=[]
-    for(let row=0;row<boardHeight;row++){
-      for(let col=0;col<boardWidth;col++){
-        if(row===0 || row===boardHeight-1 || col===0 || col===boardWidth-1){
-          visitedNodes.push(grid[row][col])
-        }
-      }
-    }
-
+   
     let nodes=getAllUnvisitedNodes(grid)
-
     switch (algorithm) {
-      case "Recursive Maze Algorithm": {
-
+      case "Recursive Division": {
+        this.createBoundary(grid,boardHeight,boardWidth,visitedNodes)
        recursiveDivision(
           nodes,
           false,
@@ -97,7 +103,8 @@ export class Pathvisualizer extends Component {
       
         break;
       }
-      case "Recursive Maze Algorithm (Vertical)":{
+      case "Recursive Division (Vertical)":{
+        this.createBoundary(grid,boardHeight,boardWidth,visitedNodes)
         recursiveDivisionVertical(  nodes,
           false,
           start,
@@ -109,7 +116,8 @@ export class Pathvisualizer extends Component {
           visitedNodes)
         break
       }
-      case "Recursive Maze Algorithm (Horizontal)":{
+      case "Recursive Division (Horizontal)":{
+        this.createBoundary(grid,boardHeight,boardWidth,visitedNodes)
         recursiveDivisionHorizontal(  nodes,
           true,
           start,
@@ -129,6 +137,17 @@ export class Pathvisualizer extends Component {
           
       this.animateMaze(visitedNodes);
     }
+  }
+
+  createBoundary(grid,boardHeight,boardWidth,visitedNodes){
+    for(let row=0;row<boardHeight;row++){
+      for(let col=0;col<boardWidth;col++){
+        if(row===0 || row===boardHeight-1 || col===0 || col===boardWidth-1){
+          visitedNodes.push(grid[row][col])
+        }
+      }
+    }
+
   }
 
   animateMaze(visitedNodes) {
@@ -300,6 +319,7 @@ export class Pathvisualizer extends Component {
     return (
       <>
         <NavBar
+          reset={this.reset}
           onSelect={this.handleAlgo}
           selectMaze={this.generateMaze}
           visualize={this.visualize}
