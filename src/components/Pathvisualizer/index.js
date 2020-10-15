@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Node } from "../Node";
 import { NavBar } from "../Navbar";
 import { recursiveDivision } from "../maze-algorithms/recursive-division";
+import {recursiveDivisionVertical} from "../maze-algorithms/recursive-division-vertical";
+import {recursiveDivisionHorizontal} from '../maze-algorithms/recurisive-division-horizontal';
 import { bfs } from "../algorithms/bfs";
 import { depthFirstSearch } from "../algorithms/depth-first-search";
 import { dijsktras } from "../algorithms/dijsktras";
@@ -26,7 +28,7 @@ export class Pathvisualizer extends Component {
       mouseIsPressed: false,
       algorithmHeading: "Pick An Algorithm",
       algorithm: "",
-      mazeAlgorithms: ["Recursive Maze Algorithm"],
+      mazeAlgorithms: ["Recursive Division","Recursive Division (Vertical)","Recursive Division (Horizontal)"],
       algorithms: [
         "Dijsktras",
         "Breadth First Search",
@@ -47,7 +49,7 @@ export class Pathvisualizer extends Component {
   componentDidMount() {
     const navbarHeight=document.getElementById('navbarId').clientHeight;
     const headingHeight=document.getElementById('heading').clientHeight
-    let boardHeight=Math.floor((document.documentElement.clientHeight-navbarHeight-headingHeight)/31)
+    let boardHeight=Math.floor((document.documentElement.clientHeight-navbarHeight-headingHeight)/30)
     let boardWidth=Math.floor(document.documentElement.clientWidth/25)
     this.setState({boardHeight,boardWidth})
     const grid = getInitialGrid(boardHeight,boardWidth);
@@ -76,12 +78,13 @@ export class Pathvisualizer extends Component {
     }
 
     let nodes=getAllUnvisitedNodes(grid)
+
     switch (algorithm) {
       case "Recursive Maze Algorithm": {
 
        recursiveDivision(
           nodes,
-          true,
+          false,
           start,
           finish,
           2,
@@ -90,16 +93,41 @@ export class Pathvisualizer extends Component {
           boardWidth-3,
           visitedNodes
         );
-        console.log("visited",visitedNodes)
-        if(visitedNodes && visitedNodes.length){
-          
-          this.animateMaze(visitedNodes);
-        }
+      
       
         break;
       }
+      case "Recursive Maze Algorithm (Vertical)":{
+        recursiveDivisionVertical(  nodes,
+          false,
+          start,
+          finish,
+          2,
+        boardHeight-3,
+          2,
+          boardWidth-3,
+          visitedNodes)
+        break
+      }
+      case "Recursive Maze Algorithm (Horizontal)":{
+        recursiveDivisionHorizontal(  nodes,
+          true,
+          start,
+          finish,
+          2,
+        boardHeight-3,
+          2,
+          boardWidth-3,
+          visitedNodes)
+        break
+      }
       default:
         console.log("Select Maze");
+    }
+
+    if(visitedNodes && visitedNodes.length){
+          
+      this.animateMaze(visitedNodes);
     }
   }
 

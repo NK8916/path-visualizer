@@ -1,7 +1,6 @@
 
 
 export function recursiveDivision(nodes,horizontal,sourceNode,finishNode, startRow, endRow, startCol, endCol,visitedNodes) {
- console.log(horizontal)
   if(horizontal){
     if(endRow-startRow<2){
       return
@@ -27,7 +26,6 @@ export function recursiveDivision(nodes,horizontal,sourceNode,finishNode, startR
     if(endCol-startCol<2){
       return
     }
-    console.log("verticle")
     let x=Math.floor(randomNumber(startRow,endRow)/2)*2
     let y=Math.floor(randomNumber(startCol,endCol)/2)*2+1
 
