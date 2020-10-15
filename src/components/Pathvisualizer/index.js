@@ -74,18 +74,20 @@ export class Pathvisualizer extends Component {
         }
       }
     }
+
+    let nodes=getAllUnvisitedNodes(grid)
     switch (algorithm) {
       case "Recursive Maze Algorithm": {
 
        recursiveDivision(
-          grid,
+          nodes,
+          true,
           start,
           finish,
           2,
         boardHeight-3,
           2,
           boardWidth-3,
-          "horizontal",
           visitedNodes
         );
         console.log("visited",visitedNodes)
@@ -322,3 +324,14 @@ export class Pathvisualizer extends Component {
   }
 }
 
+
+function getAllUnvisitedNodes(grid) {
+  let nodes = [];
+  for (let row of grid) {
+    for (let node of row) {
+      nodes.push(node);
+    }
+  }
+
+  return nodes;
+}
