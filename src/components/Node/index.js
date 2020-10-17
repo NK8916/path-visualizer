@@ -12,6 +12,7 @@ export class Node extends Component {
       onMouseDown,
       onMouseEnter,
       onMouseUp,
+      setRef
     } = this.props;
     const extractClassName = isFinish
       ? "node-finish"
@@ -23,6 +24,7 @@ export class Node extends Component {
     return (
       <td
         id={`node-${row}-${col}`}
+        ref={setRef}
         className={`node ${extractClassName}`}
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}

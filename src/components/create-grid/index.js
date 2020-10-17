@@ -25,18 +25,8 @@ const createNode = (col, row) => {
     return grid;
   };
   
-  export const getNewGrid = (grid, row, col) => {
-    const newGrid = grid.slice();
-    const node = newGrid[row][col];
-    const newNode = {
-      ...node,
-      isWall: !node.isWall,
-    };
-    newGrid[row][col] = newNode;
-    return newGrid;
-  };
 
-  export const createNewGrid=(nodes,sourceNode,finishNode)=>{
+  export const resetGrid=(ref,nodes,sourceNode,finishNode)=>{
     for (let i = 0; i < nodes.length; i++) {
         let node = nodes[i];
         if(node===sourceNode || node===finishNode){
@@ -44,9 +34,8 @@ const createNode = (col, row) => {
         }
         node.isWall=false
         node.isVisited=false
-        document
-          .getElementById(`node-${node.row}-${node.col}`)
-          .setAttribute("class", "node");
+        let dom=ref[`node-${node.row}-${node.col}`]
+        dom.className="node"
 
     }
   }

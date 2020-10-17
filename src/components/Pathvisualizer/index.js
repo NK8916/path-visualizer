@@ -10,7 +10,7 @@ import { dijsktras } from "../algorithms/dijsktras";
 import { aStar } from "../algorithms/a-star";
 import { bestFirstSearch } from "../algorithms/best-first-search";
 import { getShortestPathNodes } from "../algorithms/shortest-path";
-import {getInitialGrid,getNewGrid,createNewGrid} from '../create-grid'
+import {getInitialGrid,resetGrid} from '../create-grid'
 import "./Pathvisualizer.css";
 
 
@@ -46,6 +46,7 @@ export class Pathvisualizer extends Component {
     this.handleAlgo = this.handleAlgo.bind(this);
     this.generateMaze = this.generateMaze.bind(this);
     this.reset=this.reset.bind(this)
+    this.animateMaze=this.animateMaze.bind(this)
   }
   componentDidMount() {
     const navbarHeight=document.getElementById('navbarId').clientHeight;
@@ -55,8 +56,8 @@ export class Pathvisualizer extends Component {
     this.setState({boardHeight,boardWidth})
     const grid = getInitialGrid(boardHeight,boardWidth);
     this.setState({ grid });
-
   }
+  
 
   reset(){
     const { grid , 
@@ -68,7 +69,8 @@ export class Pathvisualizer extends Component {
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let nodes=getAllUnvisitedNodes(grid)
-    createNewGrid(nodes,start,finish)
+    resetGrid(this,nodes,start,finish)
+    this.setState({algorithmHeading:"Pick An Algorithm"})
   }
 
   generateMaze(algorithm) {
@@ -155,9 +157,8 @@ export class Pathvisualizer extends Component {
       setTimeout(() => {
         let node = visitedNodes[i];
         node.isWall=true
-        document
-          .getElementById(`node-${node.row}-${node.col}`)
-          .setAttribute("class", "node node-wall");
+        let dom=this[`node-${node.row}-${node.col}`]
+        dom.className="node node-wall"
       }, 10 * i);
     }
   }
@@ -206,8 +207,14 @@ export class Pathvisualizer extends Component {
     } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
       this.setState({ dragTarget: true });
     } else {
-      const newGrid = getNewGrid(this.state.grid, row, col);
-      this.setState({ grid: newGrid, mouseIsPressed: true });
+      let dom=this[`node-${row}-${col}`]
+      dom.isWall=!dom.isWall
+      if(dom.isWall){
+        dom.className="node node-wall"
+      }else{
+        dom.className="node"
+      }
+      this.setState({mouseIsPressed: true });
     }
   }
 
@@ -218,8 +225,13 @@ export class Pathvisualizer extends Component {
     } else if (dragTarget) {
       this.setState({ FINISH_NODE_ROW: row, FINISH_NODE_COL: col });
     } else if (mouseIsPressed) {
-      const newGrid = getNewGrid(this.state.grid, row, col);
-      this.setState({ grid: newGrid });
+      let dom=this[`node-${row}-${col}`]
+        dom.isWall=!dom.isWall
+        if(dom.isWall){
+          dom.className="node node-wall"
+        }else{
+          dom.className="node"
+        }
     }
   }
 
@@ -243,9 +255,8 @@ export class Pathvisualizer extends Component {
 
       setTimeout(() => {
         let node = visitedNodesInorder[i];
-        document
-          .getElementById(`node-${node.row}-${node.col}`)
-          .setAttribute("class", "node node-visited");
+        let dom=this[`node-${node.row}-${node.col}`]
+        dom.className="node node-visited"
       }, 10 * i);
     }
   }
@@ -254,10 +265,8 @@ export class Pathvisualizer extends Component {
     for (let i = 0; i < shortestPathNodes.length; i++) {
       setTimeout(() => {
         let node = shortestPathNodes[i];
-
-        document
-          .getElementById(`node-${node.row}-${node.col}`)
-          .setAttribute("class", "node shortest-path-node");
+        let dom=this[`node-${node.row}-${node.col}`]
+        dom.className="node shortest-path-node"
       }, 50 * i);
     }
   }
@@ -338,6 +347,7 @@ export class Pathvisualizer extends Component {
                     return (
                       <Node
                         key={nodeIdx}
+                        setRef={(node)=>{ this[`node-${row}-${col}`]=node}}
                         isStart={
                           row === this.state.START_NODE_ROW &&
                           col === this.state.START_NODE_COL
