@@ -60,22 +60,17 @@
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);
-    background-color: rgba(3, 7, 250, 0.7);
+    background-color: #97d523;
     border-radius: 100%;
   }
 
   50% {
-    background-color: rgba(5, 208, 235, 0.5);
-  }
-
-  75% {
-    transform: scale(1.2);
-    background-color: rgba(0, 203, 217, 0.5);
+    background-color: #3ce7a0;
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(22, 245, 78, 0.5);
+    background-color: #23d5ab;
   }
 }
 
