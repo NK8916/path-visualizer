@@ -23,9 +23,11 @@ export class Pathvisualizer extends Component {
       START_NODE_COL: 5,
       FINISH_NODE_ROW: 10,
       FINISH_NODE_COL: 10,
+      animationDelay:10,
       dragStart: false,
       dragTarget: false,
       mouseIsPressed: false,
+      delays:{slow:20,average:10,fast:5},
       algorithmHeading: "Pick An Algorithm",
       algorithm: "",
       mazeAlgorithms: ["Recursive Division","Recursive Division (Vertical)","Recursive Division (Horizontal)"],
@@ -46,7 +48,9 @@ export class Pathvisualizer extends Component {
     this.handleAlgo = this.handleAlgo.bind(this);
     this.generateMaze = this.generateMaze.bind(this);
     this.reset=this.reset.bind(this)
+    this.animateTraversal=this.animateTraversal.bind(this)
     this.animateMaze=this.animateMaze.bind(this)
+    this.changespeed=this.changespeed.bind(this)
   }
   componentDidMount() {
     const navbarHeight=document.getElementById('navbarId').clientHeight;
@@ -58,6 +62,10 @@ export class Pathvisualizer extends Component {
     this.setState({ grid });
   }
   
+  changespeed(delay){
+    const {delays}=this.state
+    this.setState({animationDelay:delays[delay]})
+  }
 
   reset(){
     const { grid , 
@@ -177,13 +185,13 @@ export class Pathvisualizer extends Component {
       }
       case "Best First Search": {
         this.setState({ algorithm: "Best First Search" });
-        this.setState({ algorithmHeading: "Best First Search" });
+        this.setState({ algorithmHeading: "Best First Search Algorithm" });
         break;
       }
 
       case "Depth First Search": {
         this.setState({ algorithm: "Depth First Search" });
-        this.setState({ algorithmHeading: "Depth First Search" });
+        this.setState({ algorithmHeading: "Depth First Search Algorithm" });
         break;
       }
       case "A* Algorithm": {
@@ -192,50 +200,55 @@ export class Pathvisualizer extends Component {
         break;
       }
       default:
-        this.setState({ algorithm: "Dijsktras" });
+        this.setState({ algorithm: "" });
     }
   }
+
+  animateWall(row,col){
+    let dom=this[`node-${row}-${col}`]
+    dom.className="node node-wall"
+  }
+  
   handleMouseDown(row, col) {
     const {
+      grid,
       START_NODE_ROW,
       START_NODE_COL,
       FINISH_NODE_ROW,
       FINISH_NODE_COL,
     } = this.state;
     if (row === START_NODE_ROW && col === START_NODE_COL) {
-      this.setState({ dragStart: true });
+      this.setState({ dragStart: true});
     } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
       this.setState({ dragTarget: true });
     } else {
-      let dom=this[`node-${row}-${col}`]
-      dom.isWall=!dom.isWall
-      if(dom.isWall){
-        dom.className="node node-wall"
-      }else{
-        dom.className="node"
-      }
-      this.setState({mouseIsPressed: true });
+      grid[row][col].isWall=!grid[row][col].isWall
+      this.animateWall(row,col)
+      this.setState({mouseIsPressed:true})
     }
   }
 
   handleMouseEnter(row, col) {
-    const { dragStart, dragTarget, mouseIsPressed } = this.state;
+    const { grid,dragStart, dragTarget, mouseIsPressed } = this.state;
+    console.log("dragStart",dragStart,"dragTarget",dragTarget,"mouseIsPressed",mouseIsPressed)
     if (dragStart) {
       this.setState({ START_NODE_ROW: row, START_NODE_COL: col });
-    } else if (dragTarget) {
+    } 
+    else if (dragTarget) {
       this.setState({ FINISH_NODE_ROW: row, FINISH_NODE_COL: col });
-    } else if (mouseIsPressed) {
-      let dom=this[`node-${row}-${col}`]
-        dom.isWall=!dom.isWall
-        if(dom.isWall){
-          dom.className="node node-wall"
-        }else{
-          dom.className="node"
-        }
+    } 
+    else if (mouseIsPressed ) {
+      grid[row][col].isWall=!grid[row][col].isWall
+      this.animateWall(row,col)
+      this.setState({mouseIsPressed:true})
     }
   }
 
   handleMouseUp() {
+    const { mouseIsPressed } = this.state;
+    if(mouseIsPressed){
+      console.log("ptressed bro")
+    }
     this.setState({
       mouseIsPressed: false,
       dragStart: false,
@@ -244,11 +257,12 @@ export class Pathvisualizer extends Component {
   }
 
   animateTraversal(visitedNodesInorder, shortestPathNodes) {
+    const {animationDelay}=this.state
     for (let i = 0; i <= visitedNodesInorder.length; i++) {
       if (i === visitedNodesInorder.length) {
         setTimeout(() => {
           this.animateShortestPath(shortestPathNodes);
-        }, 10 * i);
+        }, animationDelay * i);
 
         return;
       }
@@ -257,17 +271,18 @@ export class Pathvisualizer extends Component {
         let node = visitedNodesInorder[i];
         let dom=this[`node-${node.row}-${node.col}`]
         dom.className="node node-visited"
-      }, 10 * i);
+      }, animationDelay * i);
     }
   }
 
   animateShortestPath(shortestPathNodes) {
+    const {animationDelay}=this.state
     for (let i = 0; i < shortestPathNodes.length; i++) {
       setTimeout(() => {
         let node = shortestPathNodes[i];
         let dom=this[`node-${node.row}-${node.col}`]
         dom.className="node shortest-path-node"
-      }, 50 * i);
+      }, animationDelay*5 * i);
     }
   }
 
@@ -317,10 +332,13 @@ export class Pathvisualizer extends Component {
 
   visualize() {
     const { algorithm } = this.state;
-    const { visitedNodesInorder, shortestPathNodes } = this.traverseAlgorithms(
-      algorithm
-    );
-      this.animateTraversal(visitedNodesInorder, shortestPathNodes);
+    if(algorithm!==""){
+      const { visitedNodesInorder, shortestPathNodes } = this.traverseAlgorithms(
+        algorithm
+      );
+        this.animateTraversal(visitedNodesInorder, shortestPathNodes);
+    }
+   
     
   }
   render() {
@@ -332,6 +350,8 @@ export class Pathvisualizer extends Component {
           onSelect={this.handleAlgo}
           selectMaze={this.generateMaze}
           visualize={this.visualize}
+          changespeed={this.changespeed}
+          delays={this.state.delays}
           algorithms={this.state.algorithms}
           mazeAlgorithms={this.state.mazeAlgorithms}
           heading={this.state.algorithmHeading}
@@ -364,8 +384,8 @@ export class Pathvisualizer extends Component {
                         onMouseEnter={(row, col) =>
                           this.handleMouseEnter(row, col)
                         }
-                        onMouseUp={() => {
-                          this.handleMouseUp();
+                        onMouseUp={(row,col) => {
+                          this.handleMouseUp(row,col);
                         }}
                         col={col}
                         row={row}

@@ -23,7 +23,6 @@ export class Node extends Component {
       : "";
     return (
       <td
-        id={`node-${row}-${col}`}
         ref={setRef}
         className={`node ${extractClassName}`}
         onMouseDown={() => onMouseDown(row, col)}

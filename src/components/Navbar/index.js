@@ -4,7 +4,7 @@ import { Navbar, NavDropdown, Nav, Button } from "react-bootstrap";
 
 export class NavBar extends Component {
   render() {
-    const { algorithms, mazeAlgorithms } = this.props;
+    const { algorithms, mazeAlgorithms ,delays} = this.props;
     return (
       <Navbar id="navbarId" className="navbar" expand="lg" variant="dark">
         <Navbar.Brand href="#home">Path Visualizer</Navbar.Brand>
@@ -39,6 +39,23 @@ export class NavBar extends Component {
                   eventKey={algorithm}
                 >
                   {algorithm}
+                </NavDropdown.Item>
+              );
+            })}
+          </NavDropdown>
+          <NavDropdown
+            title="Speed"
+            id="basic-nav-dropdown"
+            onSelect={this.props.changespeed}
+          >
+            {Object.keys(delays).map((delay, idx) => {
+              return (
+                <NavDropdown.Item
+                  key={idx}
+                  id={`delays-${delay}`}
+                  eventKey={delay}
+                >
+                  {delay}
                 </NavDropdown.Item>
               );
             })}

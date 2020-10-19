@@ -24,19 +24,29 @@ const createNode = (col, row) => {
     }
     return grid;
   };
-  
+
 
   export const resetGrid=(ref,nodes,sourceNode,finishNode)=>{
     for (let i = 0; i < nodes.length; i++) {
         let node = nodes[i];
-        if(node===sourceNode || node===finishNode){
-          continue
-        }
-        node.isWall=false
-        node.isVisited=false
         let dom=ref[`node-${node.row}-${node.col}`]
-        dom.className="node"
+        if(node===sourceNode){
+          node.isStart=true
+          dom.className="node node-start"
+        }
+        else if(node===finishNode){
+          node.isFinish=true
+         
+          dom.className="node node-finish"
+        }
+        else{
+          dom.className="node"
+        }
+          node.isWall=false
+          node.isVisited=false
+          
+        }
+        
 
-    }
   }
   
