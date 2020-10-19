@@ -4,9 +4,9 @@ import { Navbar, NavDropdown, Nav, Button } from "react-bootstrap";
 
 export class NavBar extends Component {
   render() {
-    const { algorithms, mazeAlgorithms ,delays} = this.props;
+    const { algorithms, mazeAlgorithms ,delays,navRef} = this.props;
     return (
-      <Navbar id="navbarId" className="navbar" expand="lg" variant="dark">
+      <Navbar ref={navRef} className="navbar" expand="lg" variant="dark">
         <Navbar.Brand href="#home">Path Visualizer</Navbar.Brand>
         <Nav className="mr-auto">
           <NavDropdown

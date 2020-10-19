@@ -53,8 +53,8 @@ export class Pathvisualizer extends Component {
     this.changespeed=this.changespeed.bind(this)
   }
   componentDidMount() {
-    const navbarHeight=document.getElementById('navbarId').clientHeight;
-    const headingHeight=document.getElementById('heading').clientHeight
+    const navbarHeight=this.navRef.clientHeight;
+    const headingHeight=this.headingRef.clientHeight
     let boardHeight=Math.floor((document.documentElement.clientHeight-navbarHeight-headingHeight)/30)
     let boardWidth=Math.floor(document.documentElement.clientWidth/25)
     this.setState({boardHeight,boardWidth})
@@ -346,6 +346,7 @@ export class Pathvisualizer extends Component {
     return (
       <>
         <NavBar
+          navRef={element=>{this.navRef=element}}
           reset={this.reset}
           onSelect={this.handleAlgo}
           selectMaze={this.generateMaze}
@@ -356,7 +357,7 @@ export class Pathvisualizer extends Component {
           mazeAlgorithms={this.state.mazeAlgorithms}
           heading={this.state.algorithmHeading}
         ></NavBar>
-        <h3 id="heading" className="text-center">{this.state.algorithmHeading}</h3>
+        <h3 ref={element=>{this.headingRef=element}} className="text-center">{this.state.algorithmHeading}</h3>
         <table className={"board"}>
           <tbody>
             {grid.map((row, rowIdx) => {
