@@ -12,6 +12,7 @@ export class Node extends Component {
       onMouseDown,
       onMouseEnter,
       onMouseUp,
+      onMouseOut,
       setRef
     } = this.props;
     const extractClassName = isFinish
@@ -28,6 +29,7 @@ export class Node extends Component {
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp()}
+        onMouseOut={()=>onMouseOut()}
       ></td>
     );
   }

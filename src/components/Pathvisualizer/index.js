@@ -67,7 +67,8 @@ export class Pathvisualizer extends Component {
     this.setState({animationDelay:delays[delay]})
   }
 
-  reset(){
+
+  reset(removeWall){
     const { grid , 
       START_NODE_ROW,
       START_NODE_COL,
@@ -77,7 +78,7 @@ export class Pathvisualizer extends Component {
     const start = grid[START_NODE_ROW][START_NODE_COL];
     const finish = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let nodes=getAllUnvisitedNodes(grid)
-    resetGrid(this,nodes,start,finish)
+    resetGrid(this,nodes,start,finish,removeWall)
     this.setState({algorithmHeading:"Pick An Algorithm"})
   }
 
@@ -140,7 +141,7 @@ export class Pathvisualizer extends Component {
         break
       }
       default:
-        console.log("Select Maze");
+        this.reset()
     }
 
     if(visitedNodes && visitedNodes.length){
@@ -230,7 +231,6 @@ export class Pathvisualizer extends Component {
 
   handleMouseEnter(row, col) {
     const { grid,dragStart, dragTarget, mouseIsPressed } = this.state;
-    console.log("dragStart",dragStart,"dragTarget",dragTarget,"mouseIsPressed",mouseIsPressed)
     if (dragStart) {
       this.setState({ START_NODE_ROW: row, START_NODE_COL: col });
     } 
@@ -244,11 +244,13 @@ export class Pathvisualizer extends Component {
     }
   }
 
+  handleMouseOut(){
+    this.setState({
+      mouseIsPressed: false,
+    });
+  }
+
   handleMouseUp() {
-    const { mouseIsPressed } = this.state;
-    if(mouseIsPressed){
-      console.log("ptressed bro")
-    }
     this.setState({
       mouseIsPressed: false,
       dragStart: false,
@@ -260,6 +262,9 @@ export class Pathvisualizer extends Component {
     const {animationDelay}=this.state
     for (let i = 0; i <= visitedNodesInorder.length; i++) {
       if (i === visitedNodesInorder.length) {
+        if(!shortestPathNodes.length){
+          return
+        }
         setTimeout(() => {
           this.animateShortestPath(shortestPathNodes);
         }, animationDelay * i);
@@ -322,7 +327,6 @@ export class Pathvisualizer extends Component {
         break;
       }
       default:
-        console.log("Select Algorithms");
         this.setState({ algorithmHeading: "Pick An Algorithm" });
     }
     const shortestPathNodes = getShortestPathNodes(finish);
@@ -330,19 +334,23 @@ export class Pathvisualizer extends Component {
     return { visitedNodesInorder, shortestPathNodes };
   }
 
+  
+
   visualize() {
     const { algorithm } = this.state;
     if(algorithm!==""){
+      this.reset(false)
       const { visitedNodesInorder, shortestPathNodes } = this.traverseAlgorithms(
         algorithm
       );
+    
         this.animateTraversal(visitedNodesInorder, shortestPathNodes);
     }
    
     
   }
   render() {
-    const { grid, mouseIsPressed } = this.state;
+    const { grid, mouseIsPressed,animationDelay } = this.state;
     return (
       <>
         <NavBar
@@ -352,6 +360,7 @@ export class Pathvisualizer extends Component {
           selectMaze={this.generateMaze}
           visualize={this.visualize}
           changespeed={this.changespeed}
+          animationDelay={animationDelay}
           delays={this.state.delays}
           algorithms={this.state.algorithms}
           mazeAlgorithms={this.state.mazeAlgorithms}
@@ -385,8 +394,11 @@ export class Pathvisualizer extends Component {
                         onMouseEnter={(row, col) =>
                           this.handleMouseEnter(row, col)
                         }
-                        onMouseUp={(row,col) => {
-                          this.handleMouseUp(row,col);
+                        onMouseUp={() => {
+                          this.handleMouseUp();
+                        }}
+                        onMouseOut={()=>{
+                          this.handleMouseOut()
                         }}
                         col={col}
                         row={row}

@@ -26,9 +26,12 @@ const createNode = (col, row) => {
   };
 
 
-  export const resetGrid=(ref,nodes,sourceNode,finishNode)=>{
+  export const resetGrid=(ref,nodes,sourceNode,finishNode,removeWall)=>{
     for (let i = 0; i < nodes.length; i++) {
         let node = nodes[i];
+        if(!removeWall && node.isWall){
+          continue
+        }
         let dom=ref[`node-${node.row}-${node.col}`]
         if(node===sourceNode){
           node.isStart=true
@@ -42,7 +45,7 @@ const createNode = (col, row) => {
         else{
           dom.className="node"
         }
-          node.isWall=false
+         
           node.isVisited=false
           
         }

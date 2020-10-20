@@ -4,7 +4,7 @@ import { Navbar, NavDropdown, Nav, Button } from "react-bootstrap";
 
 export class NavBar extends Component {
   render() {
-    const { algorithms, mazeAlgorithms ,delays,navRef} = this.props;
+    const { algorithms, mazeAlgorithms ,delays,navRef,animationDelay} = this.props;
     return (
       <Navbar ref={navRef} className="navbar" expand="lg" variant="dark">
         <Navbar.Brand href="#home">Path Visualizer</Navbar.Brand>
@@ -60,7 +60,7 @@ export class NavBar extends Component {
               );
             })}
           </NavDropdown>
-          <Nav.Link onClick={this.props.reset}>Clear</Nav.Link>
+          <Nav.Link onClick={this.props.reset} eventKey={true}>Clear</Nav.Link>
         </Nav>
 
         <Button onClick={this.props.visualize} className="visualize-button">

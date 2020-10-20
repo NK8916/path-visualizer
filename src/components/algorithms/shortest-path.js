@@ -5,6 +5,5 @@ export function getShortestPathNodes(finishNode) {
     pathNodes.unshift(currentNode);
     currentNode = currentNode.previousNode;
   }
-
   return pathNodes;
 }
