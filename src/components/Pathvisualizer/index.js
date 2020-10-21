@@ -19,15 +19,15 @@ export class Pathvisualizer extends Component {
     super();
     this.state = {
       grid: [],
-      START_NODE_ROW: 5,
-      START_NODE_COL: 5,
-      FINISH_NODE_ROW: 10,
-      FINISH_NODE_COL: 10,
+      START_NODE_ROW: null,
+      START_NODE_COL: null,
+      FINISH_NODE_ROW: null,
+      FINISH_NODE_COL: null,
       animationDelay:10,
       dragStart: false,
       dragTarget: false,
       mouseIsPressed: false,
-      delays:{slow:20,average:10,fast:5},
+      delays:["Slow","Average","Fast"],
       algorithmHeading: "Pick An Algorithm",
       algorithm: "",
       mazeAlgorithms: ["Recursive Division","Recursive Division (Vertical)","Recursive Division (Horizontal)"],
@@ -50,21 +50,38 @@ export class Pathvisualizer extends Component {
     this.reset=this.reset.bind(this)
     this.animateTraversal=this.animateTraversal.bind(this)
     this.animateMaze=this.animateMaze.bind(this)
-    this.changespeed=this.changespeed.bind(this)
+    this.changeSpeed=this.changeSpeed.bind(this)
   }
   componentDidMount() {
     const navbarHeight=this.navRef.clientHeight;
     const headingHeight=this.headingRef.clientHeight
     let boardHeight=Math.floor((document.documentElement.clientHeight-navbarHeight-headingHeight)/30)
     let boardWidth=Math.floor(document.documentElement.clientWidth/25)
+    this.setState({START_NODE_ROW:parseInt(boardHeight/2),START_NODE_COL:parseInt(boardWidth/4)})
+    this.setState({FINISH_NODE_ROW:parseInt(boardHeight/2),FINISH_NODE_COL:parseInt(3*boardWidth/4)})
     this.setState({boardHeight,boardWidth})
     const grid = getInitialGrid(boardHeight,boardWidth);
     this.setState({ grid });
   }
   
-  changespeed(delay){
-    const {delays}=this.state
-    this.setState({animationDelay:delays[delay]})
+  changeSpeed(delay){
+    console.log("Dele",delay)
+    switch(delay){
+      case "Slow":{
+        this.setState({animationDelay:20})
+        break
+      }
+      case "Average":{
+        this.setState({animationDelay:10})
+        break
+      }
+      case "Fast":{
+        this.setState({animationDelay:5})
+        break
+      }
+      default:
+        this.setState({animationDelay:10})
+    }
   }
 
 
@@ -359,7 +376,7 @@ export class Pathvisualizer extends Component {
           onSelect={this.handleAlgo}
           selectMaze={this.generateMaze}
           visualize={this.visualize}
-          changespeed={this.changespeed}
+          changespeed={this.changeSpeed}
           animationDelay={animationDelay}
           delays={this.state.delays}
           algorithms={this.state.algorithms}

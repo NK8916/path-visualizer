@@ -4,7 +4,7 @@ import { Navbar, NavDropdown, Nav, Button } from "react-bootstrap";
 
 export class NavBar extends Component {
   render() {
-    const { algorithms, mazeAlgorithms ,delays,navRef,animationDelay} = this.props;
+    const { algorithms, mazeAlgorithms ,delays,navRef} = this.props;
     return (
       <Navbar ref={navRef} className="navbar" expand="lg" variant="dark">
         <Navbar.Brand href="#home">Path Visualizer</Navbar.Brand>
@@ -48,7 +48,7 @@ export class NavBar extends Component {
             id="basic-nav-dropdown"
             onSelect={this.props.changespeed}
           >
-            {Object.keys(delays).map((delay, idx) => {
+            {delays.map((delay, idx) => {
               return (
                 <NavDropdown.Item
                   key={idx}
