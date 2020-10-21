@@ -12,4 +12,4 @@ To create the maze **Recursive Division** algorithm is used
 
 To run the app ,just navigate to the root folder using cd command and use the command **npm start**.
 
-To view this project [click here] (http://NK8916.github.io/path-visualizer)
+To view this project [click here](http://NK8916.github.io/path-visualizer)
