@@ -8,7 +8,7 @@ Path Visualizer Project built using React and Boostrap to visualize the followin
 - Depth First Search Algorithm
 - A\* Algorithm
 
-To create the maze **Recursive Division** algorithm is used
+Maze is created using **Recursive Division** algorithm.
 
 To run the app ,just navigate to the root folder using cd command and use the command **npm start**.
 
